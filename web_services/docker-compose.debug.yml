@@ -1,0 +1,10 @@
+services:
+  dockerwd:
+    image: dockerwd
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m django runserver 0.0.0.0:443 --nothreading --noreload"]
+    ports:
+      - 443:443
+      - 5678:5678

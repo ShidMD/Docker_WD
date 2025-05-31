@@ -1,0 +1,14 @@
+FROM drupal:10.3.0-php8.2-fpm-alpine
+
+# - Instalar extensiones de PHP adicionales (si las necesitas para módulos específicos de Drupal)
+#   Ej: RUN docker-php-ext-install opcache pdo_mysql
+
+# - Copiar módulos o temas personalizados de tu proyecto (si ya los tienes)
+#   Ej: COPY ./my-custom-module /var/www/html/modules/custom/my-custom-module
+
+# - Instalar Composer si necesitas gestionar dependencias de Drupal (generalmente incluido, pero si no, aquí lo pondrías)
+#   Ej: COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# El puerto 9000 es el estándar para PHP-FPM, Nginx se conectará a este puerto.
+# EXPOSE no es estrictamente necesario en docker-compose, pero buena práctica:
+EXPOSE 9000 

@@ -1,0 +1,10 @@
+FROM nginx:alpine
+
+# Puedes añadir personalizaciones aquí si es necesario, por ejemplo:
+# - Instalar alguna herramienta de depuración en la imagen Nginx:
+#   RUN apk add --no-cache curl
+
+# Los puertos 80 y 443 ya están expuestos por la imagen base de Nginx,
+# pero se definen más específicamente en el docker-compose.yml.
+# EXPOSE 80
+# EXPOSE 443

@@ -1,0 +1,55 @@
+services:
+  postgres_v0_1:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: base_db
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER} #In secrets.env
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+    networks:
+      - docker-net
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - ${POSTGRES_PORTBIND}
+      - "5432:5432"
+  nextcloud:
+    image: nextcloud:latest
+    hostname: c6e14ee45941
+    environment:
+      - PHPIZE_DEPS=autoconf dpkg-dev file g++ gcc libc-dev make pkg-config re2c
+      - PHP_INI_DIR=/usr/local/etc/php
+      - APACHE_CONFDIR=/etc/apache2
+      - APACHE_ENVVARS=/etc/apache2/envvars
+      - PHP_CFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+      - PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+      - PHP_LDFLAGS=-Wl,-O1 -pie
+      - GPG_KEYS=1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
+      - PHP_VERSION=8.3.20
+      - PHP_URL=https://www.php.net/distributions/php-8.3.20.tar.xz
+      - PHP_ASC_URL=https://www.php.net/distributions/php-8.3.20.tar.xz.asc
+      - PHP_SHA256=f15914e071b5bddaf1475b5f2ba68107e8b8846655f9e89690fb7cd410b0db6c
+      - IMAGICK_COMMIT_HASH=d7d3c24af1b4f599897408f1714600b69a56473b
+      - PHP_MEMORY_LIMIT=512M
+      - PHP_UPLOAD_LIMIT=512M
+      - PHP_OPCACHE_MEMORY_CONSUMPTION=128
+      - APACHE_BODY_LIMIT=1073741824
+      - NEXTCLOUD_VERSION=31.0.2
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - nextcloud_data:/var/www/html
+    ports:
+      - ${NEXTCLOUD_PORTBIND}
+    networks:
+      - docker-net
+    working_dir: /var/www/html
+    restart: "unless-stopped"
+
+volumes:
+  db_data:
+  nextcloud_data:
+    external: true
+networks:
+  docker-net:
+    external: true
